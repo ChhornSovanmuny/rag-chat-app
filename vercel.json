@@ -7,11 +7,10 @@
     }
   ],
   "env": {
-    "WEAVIATE_ENDPOINT": "@weaviate-endpoint",
-    "WEAVIATE_API_KEY": "@weaviate-api-key",
-    "GOOGLE_CLOUD_PROJECT_ID": "@google-cloud-project-id",
-    "VERTEX_AI_LOCATION": "@vertex-ai-location",
-    "GOOGLE_APPLICATION_CREDENTIALS": "@google-application-credentials"
+    "WEAVIATE_ENDPOINT": "https://vsxexgqtsucalittzr3ara.c0.asia-southeast1.gcp.weaviate.cloud",
+    "WEAVIATE_API_KEY": "WjUyWFNUbkRQUXVueWYwQV93S3NURE5kVXJhSlJwYTBUaWdvZ09yQlJwTENTSFFEN2FQMTlnQ1d6TjBZPV92MjAw",
+    "GOOGLE_CLOUD_PROJECT_ID": "rag-demo-464201",
+    "VERTEX_AI_LOCATION": "asia-northeast1"
   },
   "headers": [
     {
