@@ -6,17 +6,6 @@
       "use": "@vercel/next"
     }
   ],
-  "functions": {
-    "pages/api/ask.ts": {
-      "maxDuration": 60
-    },
-    "pages/api/weaviate-check.ts": {
-      "maxDuration": 30
-    },
-    "pages/api/test.ts": {
-      "maxDuration": 30
-    }
-  },
   "env": {
     "WEAVIATE_ENDPOINT": "@weaviate-endpoint",
     "WEAVIATE_API_KEY": "@weaviate-api-key",
