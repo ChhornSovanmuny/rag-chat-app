@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "functions": {
+    "pages/api/ask.ts": {
+      "maxDuration": 60
+    },
+    "pages/api/weaviate-check.ts": {
+      "maxDuration": 30
+    },
+    "pages/api/test.ts": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "WEAVIATE_ENDPOINT": "@weaviate-endpoint",
+    "WEAVIATE_API_KEY": "@weaviate-api-key",
+    "GOOGLE_CLOUD_PROJECT_ID": "@google-cloud-project-id",
+    "VERTEX_AI_LOCATION": "@vertex-ai-location",
+    "GOOGLE_APPLICATION_CREDENTIALS": "@google-application-credentials"
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ]
+} 

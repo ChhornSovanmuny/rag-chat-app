@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: rag-chat-app
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WEAVIATE_ENDPOINT
+        sync: false
+      - key: WEAVIATE_API_KEY
+        sync: false
+      - key: GOOGLE_CLOUD_PROJECT_ID
+        sync: false
+      - key: VERTEX_AI_LOCATION
+        sync: false
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        sync: false 
