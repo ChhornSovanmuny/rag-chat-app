@@ -8,7 +8,7 @@ import fs from 'fs';
 dotenv.config();
 
 console.log('=== Environment Variables Check ===');
-console.log('GOOGLE_APPLICATION_CREDENTIALS:', process.env.GOOGLE_APPLICATION_CREDENTIALS);
+console.log('GOOGLE_APPLICATION_CREDENTIALS:', process.env.GOOGLE_APPLICATION_CREDENTIALS ? 'SET' : 'NOT SET');
 console.log('WEAVIATE_ENDPOINT:', process.env.WEAVIATE_ENDPOINT);
 console.log('WEAVIATE_API_KEY:', process.env.WEAVIATE_API_KEY ? 'SET' : 'NOT SET');
 console.log('VERTEX_AI_LOCATION:', process.env.VERTEX_AI_LOCATION);
@@ -16,13 +16,35 @@ console.log('GOOGLE_CLOUD_PROJECT_ID:', process.env.GOOGLE_CLOUD_PROJECT_ID);
 
 async function getAccessToken() {
   console.log('=== Service Account Check ===');
-  const keyPath = process.env.GOOGLE_APPLICATION_CREDENTIALS!;
-  console.log('Key file path:', keyPath);
   
-  const absolutePath = path.resolve(keyPath);
-  console.log('File exists:', fs.existsSync(absolutePath));
+  let key;
   
-  const key = JSON.parse(fs.readFileSync(absolutePath, 'utf8'));
+  // Try to parse credentials from environment variable first
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    try {
+      // Check if it's a JSON string (not a file path)
+      if (process.env.GOOGLE_APPLICATION_CREDENTIALS.trim().startsWith('{')) {
+        console.log('Parsing credentials from environment variable JSON');
+        key = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+      } else {
+        // It's a file path
+        console.log('Reading credentials from file path');
+        const keyPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+        console.log('Key file path:', keyPath);
+        
+        const absolutePath = path.resolve(keyPath);
+        console.log('File exists:', fs.existsSync(absolutePath));
+        
+        key = JSON.parse(fs.readFileSync(absolutePath, 'utf8'));
+      }
+    } catch (error) {
+      console.error('Error parsing credentials:', error);
+      throw new Error('Invalid Google Cloud credentials format');
+    }
+  } else {
+    throw new Error('GOOGLE_APPLICATION_CREDENTIALS environment variable not set');
+  }
+  
   console.log('JSON parsed successfully');
   console.log('client_email:', key.client_email);
   console.log('project_id:', key.project_id);
@@ -80,10 +102,23 @@ async function getAccessToken() {
 async function getAccessTokenWithGoogleAuth() {
   console.log('=== Trying GoogleAuth method ===');
   try {
-    const auth = new GoogleAuth({
-      keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-      scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-    });
+    let auth;
+    
+    // Check if credentials are provided as JSON string
+    if (process.env.GOOGLE_APPLICATION_CREDENTIALS && process.env.GOOGLE_APPLICATION_CREDENTIALS.trim().startsWith('{')) {
+      console.log('Using credentials from environment variable JSON');
+      const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+      auth = new GoogleAuth({
+        credentials: credentials,
+        scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+      });
+    } else {
+      console.log('Using keyFile path');
+      auth = new GoogleAuth({
+        keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+        scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+      });
+    }
     
     const client = await auth.getClient();
     const token = await client.getAccessToken();
